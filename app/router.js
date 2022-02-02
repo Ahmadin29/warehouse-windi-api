@@ -5,7 +5,7 @@ const userRoute = require('./controllers/users');
 const loginRoute = require('./controllers/login');
 
 router.get('/',async (req,res)=>{
-    res.send('API Worked')
+    res.send('API worked well')
 })
 
 router.use('/login',loginRoute);
