@@ -15,7 +15,8 @@ const users = new mongoose.Schema({
     },
     api_key:{
         type:String,
-    }
+    },
+    user_push_tokens:[{type:mongoose.Schema.Types.ObjectId,ref:'user_push_tokens'}]
 },{
     timestamps:true,
 })
