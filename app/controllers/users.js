@@ -1,13 +1,16 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const Users = require('../models/users');
+const PushToken = require('../models/push_tokens');
 const SHA256 = require("crypto-js/sha256");
+const authentication = require('../middleware/authentication')
 
 const route = express.Router();
 
-route.get('/',async(req,res)=>{
+route.get('/',authentication,async(req,res)=>{
     try {
-        const data = await Users.find();
+        const data = await Users.findOne({_id:req.user._id}).populate({
+            path:"user_push_tokens",
+        })
 
         res.json({
             status:'success',
@@ -15,7 +18,11 @@ route.get('/',async(req,res)=>{
             data:data,
         })
     } catch (error) {
-        console.log(error);
+        res.json({
+            status:'error',
+            message:'Gagal mendapatkan data user, '+error,
+            request:req.body,
+        })
     }
 })
 
@@ -42,9 +49,54 @@ route.post('/create',async(req,res)=>{
         const userModel = new Users(user);
 
         await userModel.save();
-        res.json(userModel);
+        res.json({
+            status  : 'success',
+            message : 'Berhasil menyimpan data user',
+            data    : userModel,
+        });
     } catch (error) {
         console.warn(error);
+    }
+})
+
+route.post('/store-push-token',authentication,async(req,res)=>{
+    try {
+        const { push_token } = req.body;
+
+        if (!push_token){
+            res.status('422').json({
+                message :"Terjadi kesalahan, push_token tidak boleh kosong",
+                status  :'error'
+            })
+            return;
+        }
+
+        const data = {
+            token:push_token,
+            user_id:req.user._id,
+        }
+
+        const pushTokenModel = new PushToken(data);
+
+        const user = await Users.findOne({_id:req.user._id});
+
+        user.user_push_tokens.push(pushTokenModel._id);
+
+        await user.save();
+        await pushTokenModel.save();
+
+        res.json({
+            status:'success',
+            message:'Berhasil menyimpan data push token',
+            data:pushTokenModel,
+        });
+    } catch (error) {
+        console.warn(error);
+        res.json({
+            status:'success',
+            message:'Gagal menyimpan data push token, '+error,
+            request:req.body,
+        });
     }
 })
 
