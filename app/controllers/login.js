@@ -23,6 +23,14 @@ route.post('/',async(req,res)=>{
             password:SHA256(password).toString(),
         }).exec();
 
+        if (!data) {
+            res.status(401).json({
+                status:'error',
+                message:'Gagal mengautentikasi data user, akun tidak ditemukan',
+                request:req.body,
+            })
+        }
+
         res.json({
             status:'success',
             message:'Berhasil mengautentikasi data user',
@@ -30,7 +38,11 @@ route.post('/',async(req,res)=>{
             request:req.body,
         })
     } catch (error) {
-        console.log(error);
+        res.status(500).json({
+            status:'error',
+            message:'Gagal mengautentikasi data user, '+error,
+            request:req.body,
+        })
     }
 })
 
