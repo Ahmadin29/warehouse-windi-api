@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const authentication = require('./middleware/authentication')
 
 const userRoute = require('./controllers/users');
 const loginRoute = require('./controllers/login');
@@ -11,6 +12,6 @@ router.get('/',async (req,res)=>{
 
 router.use('/login',loginRoute);
 router.use('/user',userRoute);
-router.use('/items',itemsRoutes);
+router.use('/items',authentication,itemsRoutes);
 
 module.exports = router;

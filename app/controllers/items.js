@@ -1,11 +1,9 @@
 const express = require('express');
-const authentication = require('../middleware/authentication')
+
 const itemsModel = require('../models/items');
 const variantsModel = require('../models/item_variants');
 
 const route = express.Router();
-
-route.use(authentication);
 
 route.get('/',async(req,res)=>{
 
