@@ -17,9 +17,9 @@ const item_variants = new mongoose.Schema({
         type:String,
         default:'available'
     },
-    first_stock:{
+    stock:{
         type:Number,
-    }
+    },
 },{
     timestamps:true,
 })

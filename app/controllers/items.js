@@ -2,6 +2,7 @@ const express = require('express');
 
 const itemsModel = require('../models/items');
 const variantsModel = require('../models/item_variants');
+const { requestStock } = require('./stock');
 
 const route = express.Router();
 
@@ -49,8 +50,6 @@ route.get('/',async(req,res)=>{
 
 
 route.delete('/delete-all',async(req,res)=>{
-
-
     try {
 
         await itemsModel.deleteMany({
@@ -75,7 +74,6 @@ route.delete('/delete-all',async(req,res)=>{
 
 
 route.post('/create',async(req,res)=>{
-
     try {
         const {_variants,_name,_description} = req.body;
 
@@ -89,21 +87,31 @@ route.post('/create',async(req,res)=>{
 
         _variants && Array.isArray(_variants) && _variants.map(async(v,i)=>{
 
-        const sku = "SKU-"+new Date().getDate()+new Date().getUTCMonth()+new Date().getFullYear()+item._id.toString().slice(-3)+"-"+i;
+            const month = new Date().getDate()+""+new Date().getUTCMonth()+""+new Date().getFullYear();
+            const sku = "SKU-"+month+item._id.toString().slice(-3)+"-"+i;
 
             const dataVariant = {
                 sku:sku,
                 item_id:item._id,
+                stock:0,
                 name:v.name,
-                first_stock:v.first_stock ? v.first_stock : 0,
             }
 
             const variant = new variantsModel(dataVariant);
-            item_variants.push(variant)
+            item_variants.push(variant);
+
+            requestStock({
+                amount:v.stock,
+                variant:variant,
+                item:item,
+                user:req.user,
+                type:"inbound"
+            });
+
             await variant.save();
         })
 
-        item_variants.map(v=>{
+        item_variants.map(async(v)=>{
             item.item_variants.push(v._id)
         })
 
@@ -123,7 +131,6 @@ route.post('/create',async(req,res)=>{
         })
     }
 })
-
 
 route.get('/variants/:id_variant',async(req,res)=>{
 
@@ -235,9 +242,6 @@ route.get('/:id',async(req,res)=>{
         .limit(limit)
         .populate({
             path:'item_variants',
-            options:{
-                select:'name'
-            }
         })
 
         res.json({
@@ -354,7 +358,7 @@ route.get('/:id/variants',async(req,res)=>{
 route.post('/:id/create-variant',async(req,res)=>{
 
     const {id} = req.params;
-    const {_name,_first_stock} = req.body
+    const {_name,_stock} = req.body
 
     try {
 
@@ -375,7 +379,6 @@ route.post('/:id/create-variant',async(req,res)=>{
             sku:sku,
             item_id:id,
             name:_name,
-            first_stock:_first_stock ? _first_stock : 0,
         }
 
         const variant = new variantsModel(dataVariant);
