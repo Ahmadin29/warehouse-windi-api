@@ -1,10 +1,11 @@
 const express = require('express');
 const stockModel = require('../models/stock_histories');
+const variantsModel = require('../models/item_variants');
 const stockRoutes = express.Router();
 
 const { sendNotification } = require('./notifications')
 
-const requestStock = async (data,res = null)=>{
+const requestStock = async (data)=>{
     const requestStock = {
         amount:data.amount,
         status:"requested",
@@ -18,7 +19,28 @@ const requestStock = async (data,res = null)=>{
     await storeStock.save();
 }
 
-const changeStatus = async (data,res = null)=>{
+const changeStatus = async (data)=>{
+
+    const stockRequest = await stockModel.findOne({
+        _id:data._id,
+        status:'requested',
+        type:data.type,
+    })
+
+    const variant =  await variantsModel.findOne({
+        _id:stockRequest.item.variant._id
+    })
+    
+    const currentStock = variant.stock;
+
+    const queryStock = {
+        stock:data.type == 'inbound' ? currentStock + stockRequest.amount : currentStock - stockRequest.amount
+    }
+
+    await variantsModel.updateOne({
+        _id:stockRequest.item.variant._id
+    },queryStock)
+
     const query = {
         status:data.status,
     };
@@ -114,19 +136,82 @@ stockRoutes.post('/accept-inbound',async(req,res)=>{
         })
         sendNotification({
             user:req.user,
+            message:'Hai, Supervisor mengkonfirmasi penambahan stock produk XYZ',
+            reciever:"supervisor"
+        });
+
+        res.status(400).json({
+            status:'succcess',
+            message:'Berhasil menerima request stock',
+        })
+
+    } catch (error) {
+        res.status(400).json({
+            status:'error',
+            message:'Gagal menerima request stock'+error,
+        })
+    }
+})
+
+stockRoutes.post('/request-outbound',async(req,res)=>{
+    try {
+
+        const {amount,variant,item} = req.body;
+
+        const data = {
+            amount:amount,
+            variant:variant,
+            item:item,
+            user:req.user,
+            type:"outbound"
+        }
+
+        requestStock(data)
+        sendNotification({
+            user:req.user,
             message:'Hai, Admin Gudang meminta approve untuk penambahan stock produk XYZ',
             reciever:"supervisor"
         });
 
         res.status(400).json({
             status:'succcess',
-            message:'Berhasil membuat request stock',
+            message:'Berhasil membuat request outbound stock',
         })
 
     } catch (error) {
         res.status(400).json({
             status:'error',
-            message:'Gagal membuat request stock'+error,
+            message:'Gagal membuat request outbound stock'+error,
+        })
+    }
+})
+
+stockRoutes.post('/accept-outbound',async(req,res)=>{
+    try {
+
+        const {_id} = req.body;
+
+        changeStatus({
+            status:'accepted',
+            type:'outbound',
+            _id:_id,
+
+        })
+        sendNotification({
+            user:req.user,
+            message:'Hai, Supervisor mengkonfirmasi penambahan stock produk XYZ',
+            reciever:"supervisor"
+        });
+
+        res.status(400).json({
+            status:'succcess',
+            message:'Berhasil menerima request outbound stock',
+        })
+
+    } catch (error) {
+        res.status(400).json({
+            status:'error',
+            message:'Gagal menerima request outbound stock'+error,
         })
     }
 })
