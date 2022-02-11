@@ -26,6 +26,48 @@ route.get('/',authentication,async(req,res)=>{
     }
 })
 
+route.post('/login',async(req,res)=>{
+
+    const { name,password,username,role_id } = req.body;
+
+    if (!name || !password || !username ){
+        res.status('422').json({
+            message :"Terjadi kesalahan, Pastikan semua data diisi",
+            status  :'error'
+        })
+        return;
+    }
+
+    try {
+        const data = await Users.findOne({
+            username:req.body.username,
+            password:SHA256(req.body.password).toString(),
+        }).populate({
+            path:"user_push_tokens",
+        })
+
+        if (data) {
+            res.json({
+                status:'success',
+                message:'Berhasil mendapatkan data user',
+                data:data,
+            })
+        }else{
+            res.json({
+                status:'error',
+                message:'Gagal mendapatkan data user, akun tidak ditemukan',
+                request:req.body,
+            })
+        }
+    } catch (error) {
+        res.json({
+            status:'error',
+            message:'Gagal mendapatkan data user, '+error,
+            request:req.body,
+        })
+    }
+})
+
 route.post('/create',async(req,res)=>{
     try {
         const { name,password,username,role_id } = req.body;
