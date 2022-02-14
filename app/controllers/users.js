@@ -28,9 +28,9 @@ route.get('/',authentication,async(req,res)=>{
 
 route.post('/login',async(req,res)=>{
 
-    const { name,password,username,role_id } = req.body;
+    const { password,username,role_id } = req.body;
 
-    if (!name || !password || !username ){
+    if (!username || !password){
         res.status('422').json({
             message :"Terjadi kesalahan, Pastikan semua data diisi",
             status  :'error'
