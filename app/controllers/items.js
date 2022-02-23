@@ -25,7 +25,7 @@ route.get('/',async(req,res)=>{
         .populate({
             path:'item_variants',
             options:{
-                select:'name'
+                select:'name stock'
             }
         })
 

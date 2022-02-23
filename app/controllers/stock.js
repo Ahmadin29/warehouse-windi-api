@@ -67,6 +67,7 @@ stockRoutes.get('/',async(req,res)=>{
             "item.item.name":{
                 $regex:_search ? _search : '',$options:"i",
             },
+            "status":"requested"
         })
         .skip(skip)
         .limit(limit)
@@ -140,7 +141,7 @@ stockRoutes.post('/accept-inbound',async(req,res)=>{
             reciever:"supervisor"
         });
 
-        res.status(400).json({
+        res.json({
             status:'succcess',
             message:'Berhasil menerima request stock',
         })

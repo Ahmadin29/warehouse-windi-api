@@ -16,6 +16,7 @@ router.use(async (req,res,next)=>{
             res.status(401).json({
                 status:'error',
                 message:'Gagal mengautentikasi data user, akun tidak ditemukan',
+                request:req.headers,
             })
         }
     } catch (error) {
@@ -23,7 +24,7 @@ router.use(async (req,res,next)=>{
         res.status(401).json({
             status:'error',
             message:'Gagal mengautentikasi data user, '+error,
-            request:req.body,
+            request:req.headers['x-api-key'],
         })
     }
 })
