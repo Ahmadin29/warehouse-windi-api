@@ -111,7 +111,7 @@ stockRoutes.post('/request-inbound',async(req,res)=>{
             reciever:"supervisor"
         });
 
-        res.status(400).json({
+        res.json({
             status:'succcess',
             message:'Berhasil membuat request stock',
         })
@@ -174,7 +174,7 @@ stockRoutes.post('/request-outbound',async(req,res)=>{
             reciever:"supervisor"
         });
 
-        res.status(400).json({
+        res.json({
             status:'succcess',
             message:'Berhasil membuat request outbound stock',
         })
@@ -204,7 +204,7 @@ stockRoutes.post('/accept-outbound',async(req,res)=>{
             reciever:"supervisor"
         });
 
-        res.status(400).json({
+        res.json({
             status:'succcess',
             message:'Berhasil menerima request outbound stock',
         })

@@ -379,6 +379,7 @@ route.post('/:id/create-variant',async(req,res)=>{
             sku:sku,
             item_id:id,
             name:_name,
+            stock:0,
         }
 
         const variant = new variantsModel(dataVariant);
