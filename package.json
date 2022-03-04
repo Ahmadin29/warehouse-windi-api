@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/Ahmadin29/warehouse-windi-api#readme",
   "dependencies": {
+    "axios": "^0.26.0",
     "crypto-js": "^4.1.1",
     "express": "^4.17.2",
     "mongodb": "^4.3.1",

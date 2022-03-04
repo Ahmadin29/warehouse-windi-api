@@ -107,6 +107,7 @@ stockRoutes.post('/request-inbound',async(req,res)=>{
         requestStock(data,res)
         sendNotification({
             user:req.user,
+            title:'Permintaan Approve',
             message:'Hai, Admin Gudang meminta approve untuk penambahan stock produk XYZ',
             reciever:"supervisor"
         });
@@ -137,6 +138,7 @@ stockRoutes.post('/accept-inbound',async(req,res)=>{
         })
         sendNotification({
             user:req.user,
+            title:'Permintaan Terkonfirmasi',
             message:'Hai, Supervisor mengkonfirmasi penambahan stock produk XYZ',
             reciever:"supervisor"
         });
@@ -170,6 +172,7 @@ stockRoutes.post('/request-outbound',async(req,res)=>{
         requestStock(data)
         sendNotification({
             user:req.user,
+            title:'Permintaan Approve',
             message:'Hai, Admin Gudang meminta approve untuk penambahan stock produk XYZ',
             reciever:"supervisor"
         });
@@ -200,6 +203,7 @@ stockRoutes.post('/accept-outbound',async(req,res)=>{
         })
         sendNotification({
             user:req.user,
+            title:'Permintaan Terkonfirmasi',
             message:'Hai, Supervisor mengkonfirmasi penambahan stock produk XYZ',
             reciever:"supervisor"
         });
