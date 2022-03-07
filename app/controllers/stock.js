@@ -53,8 +53,8 @@ const changeStatus = async (data)=>{
 stockRoutes.get('/',async(req,res)=>{
     const {_page,_limit,_search} = req.query;
 
-    const skip          = _page      ? (_page - 1) * _limit   : 0;
-    const limit         = _limit     ? _limit               : 10;
+    const limit         = _limit     ? _limit : 10;
+    const skip          = _page      ? (_page - 1) * limit : 0;
 
     try {
         const data = await stockModel.find({
@@ -71,7 +71,7 @@ stockRoutes.get('/',async(req,res)=>{
         })
         .skip(skip)
         .limit(limit)
-        .sort({_id: -1})
+        .sort({_id:-1})
 
         res.json({
             status:'success',
@@ -81,6 +81,7 @@ stockRoutes.get('/',async(req,res)=>{
                 page:_page      ? _page     : 1,
                 limit:_limit    ? _limit    : 10,
                 total:data.length,
+                skip:skip
             },
             request:req.query
         })
