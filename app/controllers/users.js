@@ -2,7 +2,7 @@ const express = require('express');
 const Users = require('../models/users');
 const PushToken = require('../models/push_tokens');
 const SHA256 = require("crypto-js/sha256");
-const authentication = require('../middleware/authentication')
+const authentication = require('../middleware/authentication');
 
 const route = express.Router();
 
@@ -105,6 +105,8 @@ route.post('/store-push-token',authentication,async(req,res)=>{
     try {
         const { push_token } = req.body;
 
+        const tokens = await PushToken.find({token:push_token})
+
         if (!push_token){
             res.status('422').json({
                 message :"Terjadi kesalahan, push_token tidak boleh kosong",
@@ -113,25 +115,32 @@ route.post('/store-push-token',authentication,async(req,res)=>{
             return;
         }
 
-        const data = {
-            token:push_token,
-            user_id:req.user._id,
+        if (tokens.length < 1) {
+            const data = {
+                token:push_token,
+                user_id:req.user._id,
+            }
+    
+            const pushTokenModel = new PushToken(data);
+    
+            const user = await Users.findOne({_id:req.user._id});
+    
+            user.user_push_tokens.push(pushTokenModel._id);
+    
+            await user.save();
+            await pushTokenModel.save();
+
+            res.json({
+                status:'success',
+                message:'Berhasil menyimpan data push token',
+                data:pushTokenModel,
+            });
+        }else{
+            res.json({
+                status:'success',
+                message:'Gagal menyimpan data push token, Token sudah ada',
+            });
         }
-
-        const pushTokenModel = new PushToken(data);
-
-        const user = await Users.findOne({_id:req.user._id});
-
-        user.user_push_tokens.push(pushTokenModel._id);
-
-        await user.save();
-        await pushTokenModel.save();
-
-        res.json({
-            status:'success',
-            message:'Berhasil menyimpan data push token',
-            data:pushTokenModel,
-        });
     } catch (error) {
         console.warn(error);
         res.json({

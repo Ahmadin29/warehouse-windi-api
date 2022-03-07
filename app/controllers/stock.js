@@ -71,6 +71,7 @@ stockRoutes.get('/',async(req,res)=>{
         })
         .skip(skip)
         .limit(limit)
+        .sort({_id: -1})
 
         res.json({
             status:'success',
@@ -107,8 +108,8 @@ stockRoutes.post('/request-inbound',async(req,res)=>{
         requestStock(data,res)
         sendNotification({
             user:req.user,
-            title:'Permintaan Approve',
-            message:'Hai, Admin Gudang meminta approve untuk penambahan stock produk XYZ',
+            title:'Permintaan Approve Inbound',
+            message:'Hai, Admin Gudang meminta approve inbound untuk penambahan stock produk '+variant.name,
             reciever:"supervisor"
         });
 
@@ -139,8 +140,8 @@ stockRoutes.post('/accept-inbound',async(req,res)=>{
         sendNotification({
             user:req.user,
             title:'Permintaan Terkonfirmasi',
-            message:'Hai, Supervisor mengkonfirmasi penambahan stock produk XYZ',
-            reciever:"supervisor"
+            message:'Hai, Supervisor mengkonfirmasi penambahan stock produk kamu',
+            reciever:"admingudang"
         });
 
         res.json({
@@ -173,7 +174,7 @@ stockRoutes.post('/request-outbound',async(req,res)=>{
         sendNotification({
             user:req.user,
             title:'Permintaan Approve',
-            message:'Hai, Admin Gudang meminta approve untuk penambahan stock produk XYZ',
+            message:'Hai, Admin Gudang meminta approve untuk penambahan stock produk '+variant.name,
             reciever:"supervisor"
         });
 
@@ -204,8 +205,8 @@ stockRoutes.post('/accept-outbound',async(req,res)=>{
         sendNotification({
             user:req.user,
             title:'Permintaan Terkonfirmasi',
-            message:'Hai, Supervisor mengkonfirmasi penambahan stock produk XYZ',
-            reciever:"supervisor"
+            message:'Hai, Supervisor mengkonfirmasi penambahan stock produk kamu',
+            reciever:"admingudang"
         });
 
         res.json({

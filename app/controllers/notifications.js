@@ -2,6 +2,9 @@ const axios = require('axios');
 const notifications = require('../models/notifications');
 const PushToken = require('../models/push_tokens');
 const users = require('../models/users');
+const express = require('express');
+const notificationRoute = express.Router();
+const authentication = require('../middleware/authentication');
 
 const sendNotification = async ({user,reciever,title,message}) =>{
 
@@ -30,7 +33,7 @@ const sendNotification = async ({user,reciever,title,message}) =>{
             console.log(response);
         })
         .catch(e=>{
-            console.log(e.response);
+            // console.log(e.response);
         })
     })
 
@@ -46,6 +49,32 @@ const sendNotification = async ({user,reciever,title,message}) =>{
     await NotificationModel.save();
 }
 
+notificationRoute.get('/',authentication,async(req,res)=>{
+    try {
+        const data = await notifications.find(
+            {
+                "reciever":{
+                    $regex:req.query.reciever ? req.query.reciever : '',$options:"i",
+                }
+            }
+        )   
+
+        res.json({
+            status:'success',
+            message:'Berhasil mendapatkan data notifikasi',
+            data:data,
+            req:req.query
+        })
+    } catch (error) {
+        res.json({
+            status:'error',
+            message:'Gagal mendapatkan data notifikasi, '+error,
+            request:req.body,
+        })
+    }
+})
+
 module.exports = {
-    sendNotification
+    sendNotification,
+    notificationRoute,
 }
