@@ -48,7 +48,6 @@ route.get('/',async(req,res)=>{
     }
 })
 
-
 route.delete('/delete-all',async(req,res)=>{
     try {
 
@@ -71,7 +70,6 @@ route.delete('/delete-all',async(req,res)=>{
         })
     }
 })
-
 
 route.post('/create',async(req,res)=>{
     try {
