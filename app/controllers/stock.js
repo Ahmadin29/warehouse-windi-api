@@ -37,6 +37,15 @@ const changeStatus = async (data)=>{
         stock:data.type == 'inbound' ? currentStock + stockRequest.amount : currentStock - stockRequest.amount
     }
 
+    if (data.type == 'inbound' && queryStock.stock < 50) {
+        sendNotification({
+            user:req.user,
+            title:'Stock tersisa kurang dari 50',
+            message:'Hai, stok barang varian '+variant.name+' sisa kurang dari 50, harap cek',
+            reciever:"supervisor"
+        });
+    }
+
     await variantsModel.updateOne({
         _id:stockRequest.item.variant._id
     },queryStock)
@@ -203,6 +212,7 @@ stockRoutes.post('/accept-outbound',async(req,res)=>{
             _id:_id,
 
         })
+
         sendNotification({
             user:req.user,
             title:'Permintaan Terkonfirmasi',
