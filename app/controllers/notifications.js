@@ -30,7 +30,7 @@ const sendNotification = async ({user,reciever,title,message}) =>{
         };
 
         axios.post('https://exp.host/--/api/v2/push/send',data).then(response=>{
-            console.log(response);
+            // console.log(response);
         })
         .catch(e=>{
             // console.log(e.response);

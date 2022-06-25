@@ -53,7 +53,7 @@ route.post('/login',async(req,res)=>{
                 data:data,
             })
         }else{
-            res.json({
+            res.status("500").json({
                 status:'error',
                 message:'Gagal mendapatkan data user, akun tidak ditemukan',
                 request:req.body,

@@ -21,6 +21,17 @@ const requestStock = async (data)=>{
 
 const changeStatus = async (data)=>{
 
+    if (data.status == 'rejected') {
+        const query = {
+            status:data.status,
+        };
+    
+        await stockModel.updateOne({
+            _id:data._id
+        },query)
+        return
+    }
+
     const stockRequest = await stockModel.findOne({
         _id:data._id,
         status:'requested',
@@ -125,13 +136,13 @@ stockRoutes.post('/request-inbound',async(req,res)=>{
 
         res.json({
             status:'succcess',
-            message:'Berhasil membuat request stock',
+            message:'Berhasil membuat request inbound stock',
         })
 
     } catch (error) {
         res.status(400).json({
             status:'error',
-            message:'Gagal membuat request stock'+error,
+            message:'Gagal membuat request inbound stock'+error,
         })
     }
 })
@@ -156,13 +167,44 @@ stockRoutes.post('/accept-inbound',async(req,res)=>{
 
         res.json({
             status:'succcess',
-            message:'Berhasil menerima request stock',
+            message:'Berhasil menerima request inbound stock',
         })
 
     } catch (error) {
         res.status(400).json({
             status:'error',
-            message:'Gagal menerima request stock'+error,
+            message:'Gagal menerima request inbound stock'+error,
+        })
+    }
+})
+
+stockRoutes.post('/reject-inbound',async(req,res)=>{
+    try {
+
+        const {_id} = req.body;
+
+        changeStatus({
+            status:'rejected',
+            type:'inbound',
+            _id:_id,
+
+        })
+        sendNotification({
+            user:req.user,
+            title:'Permintaan Terkonfirmasi',
+            message:'Hai, Supervisor menolak penambahan stock produk kamu',
+            reciever:"admingudang"
+        });
+
+        res.json({
+            status:'succcess',
+            message:'Berhasil menolak request inbound stock',
+        })
+
+    } catch (error) {
+        res.status("400").json({
+            status:'error',
+            message:'Gagal menolak request inbound stock'+error,
         })
     }
 })
@@ -229,6 +271,38 @@ stockRoutes.post('/accept-outbound',async(req,res)=>{
         res.status(400).json({
             status:'error',
             message:'Gagal menerima request outbound stock'+error,
+        })
+    }
+})
+
+stockRoutes.post('/reject-outbound',async(req,res)=>{
+    try {
+
+        const {_id} = req.body;
+
+        changeStatus({
+            status:'rejected',
+            type:'outbound',
+            _id:_id,
+
+        })
+
+        sendNotification({
+            user:req.user,
+            title:'Permintaan Terkonfirmasi',
+            message:'Hai, Supervisor menolak pengurangan stock produk kamu',
+            reciever:"admingudang"
+        });
+
+        res.json({
+            status:'succcess',
+            message:'Berhasil menolak request outbound stock',
+        })
+
+    } catch (error) {
+        res.status("400").json({
+            status:'error',
+            message:'Gagal menolak request outbound stock'+error,
         })
     }
 })
