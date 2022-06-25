@@ -24,7 +24,7 @@ route.post('/',async(req,res)=>{
         }).exec();
 
         if (!data) {
-            res.status(401).json({
+            res.status("401").json({
                 status:'error',
                 message:'Gagal mengautentikasi data user, akun tidak ditemukan',
                 request:req.body,
@@ -38,7 +38,7 @@ route.post('/',async(req,res)=>{
             request:req.body,
         })
     } catch (error) {
-        res.status(500).json({
+        res.status("500").json({
             status:'error',
             message:'Gagal mengautentikasi data user, '+error,
             request:req.body,
