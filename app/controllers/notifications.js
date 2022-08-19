@@ -6,7 +6,7 @@ const express = require('express');
 const notificationRoute = express.Router();
 const authentication = require('../middleware/authentication');
 
-const sendNotification = async ({user,reciever,title,message}) =>{
+const sendNotification = async ({user,reciever,title,message,data}) =>{
 
     const role = reciever == 'supervisor' ? 1 : 2;
 
@@ -41,7 +41,8 @@ const sendNotification = async ({user,reciever,title,message}) =>{
         sender:user,
         reciever:reciever,
         title:title,
-        message:message
+        message:message,
+        data:data
     }
 
     const NotificationModel = new notifications(notification);

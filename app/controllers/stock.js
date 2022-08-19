@@ -53,7 +53,8 @@ const changeStatus = async (data)=>{
             user:req.user,
             title:'Stock tersisa kurang dari 50',
             message:'Hai, stok barang varian '+variant.name+' sisa kurang dari 50, harap cek',
-            reciever:"supervisor"
+            reciever:"supervisor",
+            data:variant,
         });
     }
 
@@ -131,7 +132,8 @@ stockRoutes.post('/request-inbound',async(req,res)=>{
             user:req.user,
             title:'Permintaan Approve Inbound',
             message:'Hai, Admin Gudang meminta approve inbound untuk penambahan stock produk '+variant.name,
-            reciever:"supervisor"
+            reciever:"supervisor",
+            data:data,
         });
 
         res.json({
@@ -150,7 +152,7 @@ stockRoutes.post('/request-inbound',async(req,res)=>{
 stockRoutes.post('/accept-inbound',async(req,res)=>{
     try {
 
-        const {_id} = req.body;
+        const {_id,val} = req.body;
 
         changeStatus({
             status:'accepted',
@@ -162,7 +164,8 @@ stockRoutes.post('/accept-inbound',async(req,res)=>{
             user:req.user,
             title:'Permintaan Terkonfirmasi',
             message:'Hai, Supervisor mengkonfirmasi penambahan stock produk kamu',
-            reciever:"admingudang"
+            reciever:"admingudang",
+            data:val
         });
 
         res.json({
@@ -181,7 +184,7 @@ stockRoutes.post('/accept-inbound',async(req,res)=>{
 stockRoutes.post('/reject-inbound',async(req,res)=>{
     try {
 
-        const {_id} = req.body;
+        const {_id,val} = req.body;
 
         changeStatus({
             status:'rejected',
@@ -193,6 +196,7 @@ stockRoutes.post('/reject-inbound',async(req,res)=>{
             user:req.user,
             title:'Permintaan Terkonfirmasi',
             message:'Hai, Supervisor menolak penambahan stock produk kamu',
+            data:val,
             reciever:"admingudang"
         });
 
@@ -227,7 +231,8 @@ stockRoutes.post('/request-outbound',async(req,res)=>{
             user:req.user,
             title:'Permintaan Approve',
             message:'Hai, Admin Gudang meminta approve untuk penambahan stock produk '+variant.name,
-            reciever:"supervisor"
+            reciever:"supervisor",
+            data:data,
         });
 
         res.json({
@@ -246,7 +251,7 @@ stockRoutes.post('/request-outbound',async(req,res)=>{
 stockRoutes.post('/accept-outbound',async(req,res)=>{
     try {
 
-        const {_id} = req.body;
+        const {_id,val} = req.body;
 
         changeStatus({
             status:'accepted',
@@ -259,7 +264,8 @@ stockRoutes.post('/accept-outbound',async(req,res)=>{
             user:req.user,
             title:'Permintaan Terkonfirmasi',
             message:'Hai, Supervisor mengkonfirmasi penambahan stock produk kamu',
-            reciever:"admingudang"
+            reciever:"admingudang",
+            data:val,
         });
 
         res.json({
@@ -278,7 +284,7 @@ stockRoutes.post('/accept-outbound',async(req,res)=>{
 stockRoutes.post('/reject-outbound',async(req,res)=>{
     try {
 
-        const {_id} = req.body;
+        const {_id,val} = req.body;
 
         changeStatus({
             status:'rejected',
@@ -291,7 +297,8 @@ stockRoutes.post('/reject-outbound',async(req,res)=>{
             user:req.user,
             title:'Permintaan Terkonfirmasi',
             message:'Hai, Supervisor menolak pengurangan stock produk kamu',
-            reciever:"admingudang"
+            reciever:"admingudang",
+            data:val
         });
 
         res.json({
