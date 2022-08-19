@@ -38,6 +38,10 @@ const changeStatus = async (data)=>{
         type:data.type,
     })
 
+    if (stockRequest == null) {
+        return
+    }
+
     const variant =  await variantsModel.findOne({
         _id:stockRequest.item.variant._id
     })
