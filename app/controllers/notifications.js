@@ -45,6 +45,8 @@ const sendNotification = async ({user,reciever,title,message,data}) =>{
         data:data
     }
 
+    console.log(data);
+
     const NotificationModel = new notifications(notification);
 
     await NotificationModel.save();
