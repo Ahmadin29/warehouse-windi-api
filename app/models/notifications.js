@@ -15,6 +15,9 @@ const notifications = new schema({
     message:{
         type:String,
     },
+    message:{
+        type:Object,
+    },
 },{
     timestamps:true,
 })
