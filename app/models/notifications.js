@@ -15,7 +15,7 @@ const notifications = new schema({
     message:{
         type:String,
     },
-    message:{
+    data:{
         type:Object,
     },
 },{
