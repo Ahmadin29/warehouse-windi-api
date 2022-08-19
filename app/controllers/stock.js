@@ -38,6 +38,8 @@ const changeStatus = async (data)=>{
         type:data.type,
     })
 
+    console.log(stockRequest,'stockrequse');
+
     if (stockRequest == null) {
         return
     }
